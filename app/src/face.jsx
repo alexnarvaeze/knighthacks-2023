@@ -1,9 +1,7 @@
 import "./css/face.css"
 
-function Face() {
+export default function Face() {
     return (
         <p>Helloier world</p>
     )
 }
-
-export default Face
