@@ -35,36 +35,6 @@ function App() {
   async function processMessageToChatGPT(chatMessages){
     // chatMessages 
   }
-
-  return (
-    <>
-      <div className="App">
-        <div style={{position: "relative", height: "800px", width: "700px"}}>
-
-        <MainContainer>
-          <ChatContainer>
-            <MessageList
-              typingIndicator={typing ? <TypingIndicator content="ChatGPT is typing" /> : null}>
-              {messages.map((message, i) =>{
-                return <Message key={i} model={message} />
-              })}
-            </MessageList>
-            <MessageInput placeholder='Type your question here' onSend={handleSend}/>
-          </ChatContainer>
-        </MainContainer>
-
-
-
-
-
-
-        </div>
-        
-
-      </div>
-     
-    </>
-  )
 }
 
 export default App
