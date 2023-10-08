@@ -10,25 +10,23 @@ RouteA -> please do a
 */
 import express from "express"
 import cors from "cors"
+import bodyParser from "body-parser"
 
 
 const app = express();
 app.use(cors())
-
-const port = process.env.PORT || 5000;
-
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.use(express.json());
 
 var linkedin_url;
 var linkedin_data;
 
 app.post("/from_face", (req, res) => {
     console.log(req.body);
-    linkedin_url = req.body;
+    linkedin_url = req.body.url;
 });
 
 app.get("/to_link_api", (req, res) => {
-    res.send(linkedin_url);
+    res.send({linkedin_url});
 });
 
 app.post("/parse_linkedin", (req, res) => {
@@ -37,5 +35,9 @@ app.post("/parse_linkedin", (req, res) => {
 });
 
 app.get("/to_gpt", (req, res) => {
-    res.send(linkedin_data);
+    res.send({linkedin_data});
 });
+
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => console.log(`Listening on port ${port}`));

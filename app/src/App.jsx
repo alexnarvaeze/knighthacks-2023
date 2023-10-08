@@ -9,6 +9,7 @@ import {
   MessageInput,
   TypingIndicator,
 } from "@chatscope/chat-ui-kit-react";
+import { getLinkedinData } from "./apiRequests.mjs";
 
 function App() {
   const [typing, setTyping] = useState(false);
@@ -94,13 +95,8 @@ function App() {
   }
 }
 
-var linkedin_data;
+// var linkedin_data;
 
-async function serverRequest() {
-    const res = await fetch("http://localhost:5000/to_gpt");
-    const linkedindata = await res.json();
-    return linkedindata;
-}
 /*
 var data = await fetch("http://localhost:5000/to_gpt", {
   method: "POST",
@@ -120,10 +116,10 @@ var data1 = await fetch("http://localhost:5000/to_gpt", {
 */
 export async function fetchAndDisplayResponse() {
   // Assuming you have already received a response from the HTTP request
-  const responseData = await serverRequest();
+  const responseData = await getLinkedinData();
 
   // Extract the relevant data from the response, for example, a message
-  const messageToChatGPT = responseData.message;
+  // const messageToChatGPT = responseData.message;
 
   // Format the data for ChatGPT (assuming you're using OpenAI's ChatGPT API)
   const chatGPTData = {
@@ -133,7 +129,7 @@ export async function fetchAndDisplayResponse() {
         content:
           "Pretend you are shakespeare dropping a diss track on whatever text I send you",
       },
-      { role: "user", content: messageToChatGPT },
+      { role: "user", content: responseData },
     ],
   };
 

@@ -1,138 +1,131 @@
 //check have cheerio and fetch libraries (npm install cheerio and fetch)
-import fetch from "node-fetch";
 import cheerio from "cheerio";
-import fs from "fs";
-import express from "express";
 
 //when button is clicked, the link inside of the textbox will become the inputted url
 
-var inputtedUrl;
+// var inputtedUrl;
 
-function serverRequest() {
-  useEffect(() => {
-  fetch("http://localhost:5000/to_link_api")
-      .then(inputtedUrl = req.body)
-}, [])
-}
+export async function getLinkedinData() {
+  const res = await fetch("http://localhost:5000/to_link_api");
+  let inputtedUrl;
+  try {
+    const data = await res.json();
+    inputtedUrl = data.linkedin_url;
+  } catch (err) {
+    console.err(err);
+  }
+  const encodedProfile = encodeURIComponent(inputtedUrl);
 
-serverRequest();
+  //makes the url readable for our API
+  const apiBase = "https://linkedin-profiles1.p.rapidapi.com/extract";
+  const apiQueryParams = `?url=${encodedProfile}&html=true`;
+  const apiUrl = `${apiBase}${apiQueryParams}`;
 
-const encodedProfile = encodeURIComponent(inputtedUrl);
+  console.log(apiUrl);
 
-//makes the url readable for our API
-const apiBase = "https://linkedin-profiles1.p.rapidapi.com/extract";
-const apiQueryParams = `?url=${encodedProfile}&html=true`;
-const apiUrl = `${apiBase}${apiQueryParams}`;
+  const url = apiUrl;
+  //https://linkedin-profiles1.p.rapidapi.com/extract?url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdianneth-murillo%2F&html=false"
+  const options = {
+    method: "GET",
+    headers: {
+      "X-RapidAPI-Key": "fb230fcbe7msh63b1e57b0e6a094p18e4b9jsn4236c4d480f1",
+      "X-RapidAPI-Host": "linkedin-profiles1.p.rapidapi.com",
+    },
+  };
 
-console.log(apiUrl);
+  try {
+    const response = await fetch(url, options);
+    const result = await response.text();
 
-const url = apiUrl;
-//https://linkedin-profiles1.p.rapidapi.com/extract?url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdianneth-murillo%2F&html=false"
-const options = {
-  method: "GET",
-  headers: {
-    "X-RapidAPI-Key": "fb230fcbe7msh63b1e57b0e6a094p18e4b9jsn4236c4d480f1",
-    "X-RapidAPI-Host": "linkedin-profiles1.p.rapidapi.com",
-  },
-};
+    //Turns the text string of linkedin's data and parses it
+    const data = JSON.parse(result);
 
-try {
-  const response = await fetch(url, options);
-  const result = await response.text();
+    console.log(data);
 
-  //Turns the text string of linkedin's data and parses it
-  const data = JSON.parse(result);
+    //Gets the person's name
+    const name = data.extractor.name;
+    console.log("Name:", name);
 
-  console.log(data);
+    //Get the description
+    const description = data.extractor.description;
+    console.log("Description:", description);
 
-  //Gets the person's name
-  const name = data.extractor.name;
-  console.log("Name:", name);
+    //Gets education
+    const educationArray = data.extractor.education;
 
-  //Get the description
-  const description = data.extractor.description;
-  console.log("Description:", description);
+    const educations = [];
 
-  //Gets education
-  const educationArray = data.extractor.education;
+    //Goes through every education
+    educationArray.forEach((education, index) => {
+      const schoolName = education.name;
+      const activities = education.activities;
+      const degree = education.degree;
 
-  const educations = [];
+      console.log(`Education ${index + 1}: `);
+      console.log("School name:", schoolName);
+      console.log("Degree:", degree);
 
-  //Goes through every education
-  educationArray.forEach((education, index) => {
-    const schoolName = education.name;
-    const activities = education.activities;
-    const degree = education.degree;
+      const formattedEducation = `Education ${
+        index + 1
+      } - School name: ${schoolName} - Degree: ${degree}`;
 
-    console.log(`Education ${index + 1}: `);
-    console.log("School name:", schoolName);
-    console.log("Degree:", degree);
+      educations.push(formattedEducation);
+    });
 
-    const formattedEducation = `Education ${
-      index + 1
-    } - School name: ${schoolName} - Degree: ${degree}`;
+    console.log("Educations:", educations);
 
-    educations.push(formattedEducation);
-  });
+    //reads the raw html file for skillsets
+    const rawHtml = data.raw;
+    const $ = cheerio.load(rawHtml);
 
-  console.log("Educations:", educations);
+    const bio = [];
+    const userBio = $(".top-card-layout__headline");
+    const bioText = userBio.text();
+    bio.push(bioText);
 
-  //reads the raw html file for skillsets
-  const rawHtml = data.raw;
-  const $ = cheerio.load(rawHtml);
+    console.log(bioText);
 
-  const bio = [];
-  const userBio = $(".top-card-layout__headline");
-  const bioText = userBio.text();
-  bio.push(bioText);
+    const experienceTiles = [];
 
-  console.log(bioText);
+    $(".profile-section-card__title").each((index, element) => {
+      const title = $(element).text().trim();
+      experienceTiles.push(title);
+    });
 
-  const experienceTiles = [];
+    console.log("Experiences:", experienceTiles);
 
-  $(".profile-section-card__title").each((index, element) => {
-    const title = $(element).text().trim();
-    experienceTiles.push(title);
-  });
+    /// Where the person worked
+    const graphArray = data.graph["@graph"];
 
-  console.log("Experiences:", experienceTiles);
+    const organizations = [];
 
-  /// Where the person worked
-  const graphArray = data.graph["@graph"];
-
-  const organizations = [];
-
-  for (const obj of graphArray) {
-    if (obj.alumniOf && Array.isArray(obj.alumniOf)) {
-      for (const alumnniOfObj of obj.alumniOf) {
-        if (alumnniOfObj.name) {
-          organizations.push(alumnniOfObj.name);
+    for (const obj of graphArray) {
+      if (obj.alumniOf && Array.isArray(obj.alumniOf)) {
+        for (const alumnniOfObj of obj.alumniOf) {
+          if (alumnniOfObj.name) {
+            organizations.push(alumnniOfObj.name);
+          }
         }
       }
     }
+
+    console.log("Past Organizations: ", organizations);
+
+    //holds all the data
+    const allDataFromLinkedIn = {
+      Name: name,
+      ProfileBio: bio,
+      Descriptions: description,
+      Educations: educations,
+      Experiences: experienceTiles,
+      Organizations: organizations,
+    };
+
+    const jsonData = JSON.stringify(allDataFromLinkedIn, null, 2);
+    console.log(`Data saved`);
+    return jsonData;
+  } catch (error) {
+    console.error(error);
   }
-
-  console.log("Past Organizations: ", organizations);
-
-  //holds all the data
-  const allDataFromLinkedIn = {
-    Name: name,
-    ProfileBio: bio,
-    Descriptions: description,
-    Educations: educations,
-    Experiences: experienceTiles,
-    Organizations: organizations,
-  };
-
-  const jsonData = JSON.stringify(allDataFromLinkedIn, null, 2);
-
-  useEffect(() => {
-    fetch("http://localhost:5000/parse_linkedin")
-        .then(res => res.send(jsonData))
-        .then(console.log(jsonData))
-  }, [])
-
-  console.log(`Data saved`);
-} catch (error) {
-  console.error(error);
+  return "";
 }

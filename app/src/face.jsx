@@ -5,9 +5,16 @@ export default function Face() {
   const [text, setText] = useState("");
 
   async function sendToServer(url) {
-    fetch("http://localhost:5000/from_face")
-        .then(res => res.send(url))
-        .then(console.log(url))
+    fetch("http://localhost:5000/from_face", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({url}),
+    })
+    .then(console.log(url))
+    // .then(res => res.send(url))
+
   }
 
   return (
@@ -19,16 +26,15 @@ export default function Face() {
         Import your LinkedIn To Begin
       </h2>
       <form className="place-self-center place-content-center place-items-stretch space-y-4"
-        onSubmit={async (e) => {
+        onSubmit={ (e) => {
           e.preventDefault();
-          const response = await fetch("http://localhost:8080/transcript", {
-            method: "POST",
-            body: JSON.stringify(text),
-          });
+          sendToServer(text);
+          console.log("adsjfu");
 
-          const data = await response.json();
-
-          const whatever = await sendToServer(data);
+          // const data = await response();
+          //console.log(text);
+          // sendToServer(text);
+          // const whatever = await sendToServer( {"hello"} );
           // do whatever with data right here
           // const sendToServer = await useEffect(() => {
           //   fetch("http://localhost:5000/from_face")
@@ -36,7 +42,7 @@ export default function Face() {
           //       .then(console.log(data))
           // }, [])
           
-          setTranscript(data);
+          // setTranscript(data);
         }}
       >
         <input
@@ -47,7 +53,7 @@ export default function Face() {
           className="input input-bordered rounded-full w-full max-w-xs"
         />
         <input
-          type="button"
+          type="submit"
           id="submit"
           value="Sign Me Up!"
           className="font-open-sans btn btn-wide rounded-full btn-outline btn-accent hover:btn-accent"

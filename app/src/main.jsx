@@ -11,7 +11,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <TranscriptProvider>
       <Face></Face>
       <Back></Back>
-      <App></App>
     </TranscriptProvider>
   </React.StrictMode>
 );

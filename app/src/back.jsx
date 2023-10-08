@@ -6,14 +6,15 @@ import { useEffect, useState } from "react";
 export default function Back() {
   const [response, setResponse] = useState("");
 
-  useEffect(() => {
+  function newFetch(){
     fetchAndDisplayResponse()
       .then((res) => res.json())
       .then((data) => setResponse(data));
-  }, []);
+  }
 
   return (
     <div className="h-screen bg-gradient-to-r from-sky-400 via-rose-400 to-lime-400 flex items-center space-y-10 join join-vertical">
+      <button onClick={newFetch} className="font-open-sans btn btn-wide rounded-full btn-outline btn-accent hover:btn-accent" >aa</button>
       <div className="box-border align-middle mt-32 h-5/6 w-3/6 p-4 border-4 ...">
         <p
           className="output mb-3 text-black dark:text-gray-400"
