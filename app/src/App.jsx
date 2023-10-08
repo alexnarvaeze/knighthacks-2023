@@ -101,7 +101,7 @@ function serverRequest() {
     fetch("http://localhost:5000/to_gpt").then((linkedin_data = req.body));
   }, []);
 }
-
+/*
 var data = await fetch("http://localhost:5000/to_gpt", {
   method: "POST",
   headers: {
@@ -117,9 +117,11 @@ var data1 = await fetch("http://localhost:5000/to_gpt", {
   },
   body: dataStff,
 });
+*/
 export async function fetchAndDisplayResponse() {
+  serverRequest();
   // Assuming you have already received a response from the HTTP request
-  const responseData = await data1.json();
+  const responseData = await linkedin_data;
 
   // Extract the relevant data from the response, for example, a message
   const messageToChatGPT = responseData.message;
