@@ -23,9 +23,7 @@ export default function Face() {
           e.preventDefault();
           const response = await fetch("http://localhost:8080/transcript", {
             method: "POST",
-            body: JSON.stringify({
-              linkedinurl: text,
-            }),
+            body: JSON.stringify(text),
           });
 
           const data = await response.json();
