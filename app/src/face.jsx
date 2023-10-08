@@ -4,6 +4,12 @@ import { useState } from "react";
 export default function Face() {
   const [text, setText] = useState("");
 
+  async function sendToServer(url) {
+    fetch("http://localhost:5000/from_face")
+        .then(res => res.send(url))
+        .then(console.log(url))
+  }
+
   return (
     <div className="h-screen grid grid-cols-1 row-auto justify-items-center content-center text-center bg-gradient-to-b from-cyan-400 to-indigo-950 space-y-10">
       <h1 className="font-arvo font-bold text-stone-50 text-6xl">
@@ -23,7 +29,15 @@ export default function Face() {
           });
 
           const data = await response.json();
+
+          const whatever = await sendToServer(data);
           // do whatever with data right here
+          // const sendToServer = await useEffect(() => {
+          //   fetch("http://localhost:5000/from_face")
+          //       .then(res => res.send(data))
+          //       .then(console.log(data))
+          // }, [])
+          
           setTranscript(data);
         }}
       >

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./css/App.css";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {
@@ -96,10 +96,10 @@ function App() {
 
 var linkedin_data;
 
-function serverRequest() {
-  useEffect(() => {
-    fetch("http://localhost:5000/to_gpt").then((linkedin_data = req.body));
-  }, []);
+async function serverRequest() {
+    const res = await fetch("http://localhost:5000/to_gpt");
+    const linkedindata = await res.json();
+    return linkedindata;
 }
 /*
 var data = await fetch("http://localhost:5000/to_gpt", {
@@ -119,9 +119,8 @@ var data1 = await fetch("http://localhost:5000/to_gpt", {
 });
 */
 export async function fetchAndDisplayResponse() {
-  serverRequest();
   // Assuming you have already received a response from the HTTP request
-  const responseData = await linkedin_data;
+  const responseData = await serverRequest();
 
   // Extract the relevant data from the response, for example, a message
   const messageToChatGPT = responseData.message;
@@ -153,8 +152,9 @@ export async function fetchAndDisplayResponse() {
   );
 
   const chatGPTResult = await chatGPTResponse.json();
-  const chatGPTResponseParagraph = document.getElementById("chatGPTResponse");
-  chatGPTResponseParagraph.textContent =
-    chatGPTResult.choices[0].message.content; // Display response // Access the response from ChatGPT
+  return chatGPTResult.choices[0].message.content;
+  // const chatGPTResponseParagraph = document.getElementById("chatGPTResponse");
+  // chatGPTResponseParagraph.textContent =
+  // chatGPTResult.choices[0].message.content; // Display response // Access the response from ChatGPT
 }
 export default App;
