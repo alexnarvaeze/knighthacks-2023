@@ -102,14 +102,6 @@ function serverRequest() {
   }, []);
 }
 
-var linkedin_data;
-
-function serverRequest() {
-  useEffect(() => {
-    fetch("http://localhost:5000/to_gpt").then((linkedin_data = req.body));
-  }, []);
-}
-
 var data = await fetch("http://localhost:5000/to_gpt", {
   method: "POST",
   headers: {
@@ -118,47 +110,49 @@ var data = await fetch("http://localhost:5000/to_gpt", {
 });
 dataStff = await data.json();
 
-var data1 = await fetch("http://localhost:8000/endpoints", {
+var data1 = await fetch("http://localhost:5000/to_gpt", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
   },
   body: dataStff,
 });
+export async function fetchAndDisplayResponse() {
+  // Assuming you have already received a response from the HTTP request
+  const responseData = await data1.json();
 
-// Assuming you have already received a response from the HTTP request
-const responseData = await data1.json();
+  // Extract the relevant data from the response, for example, a message
+  const messageToChatGPT = responseData.message;
 
-// Extract the relevant data from the response, for example, a message
-const messageToChatGPT = responseData.message;
+  // Format the data for ChatGPT (assuming you're using OpenAI's ChatGPT API)
+  const chatGPTData = {
+    messages: [
+      {
+        role: "system",
+        content:
+          "Pretend you are shakespeare dropping a diss track on whatever text I send you",
+      },
+      { role: "user", content: messageToChatGPT },
+    ],
+  };
 
-// Format the data for ChatGPT (assuming you're using OpenAI's ChatGPT API)
-const chatGPTData = {
-  messages: [
+  // Send the data to ChatGPT (assuming you have an API key)
+
+  const chatGPTResponse = await fetch(
+    "https://api.openai.com/v1/chat/completions",
     {
-      role: "system",
-      content:
-        "Pretend you are shakespeare dropping a diss track on whatever text I send you",
-    },
-    { role: "user", content: messageToChatGPT },
-  ],
-};
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + import.meta.env.VITE_REACT_APP_API_KEY,
+      },
+      body: JSON.stringify(chatGPTData),
+    }
+  );
 
-// Send the data to ChatGPT (assuming you have an API key)
-
-const chatGPTResponse = await fetch(
-  "https://api.openai.com/v1/chat/completions",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + import.meta.env.VITE_REACT_APP_API_KEY,
-    },
-    body: JSON.stringify(chatGPTData),
-  }
-);
-
-const chatGPTResult = await chatGPTResponse.json();
-console.log(chatGPTResult.choices[0].message.content); // Access the response from ChatGPT
-
+  const chatGPTResult = await chatGPTResponse.json();
+  const chatGPTResponseParagraph = document.getElementById("chatGPTResponse");
+  chatGPTResponseParagraph.textContent =
+    chatGPTResult.choices[0].message.content; // Display response // Access the response from ChatGPT
+}
 export default App;
