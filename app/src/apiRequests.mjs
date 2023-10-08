@@ -5,7 +5,17 @@ import fs from "fs";
 import express from "express";
 
 //when button is clicked, the link inside of the textbox will become the inputted url
-const inputtedUrl = "https://www.linkedin.com/in/dianneth-murillo/";
+
+var inputtedUrl;
+
+function serverRequest() {
+  useEffect(() => {
+  fetch("http://localhost:5000/to_link_api")
+      .then(inputtedUrl = req.body)
+}, [])
+}
+
+serverRequest();
 
 const encodedProfile = encodeURIComponent(inputtedUrl);
 

@@ -19,9 +19,19 @@ const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
+var linkedin_url;
 var linkedin_data;
 
-app.get("/parse_linkedin", (req, res) => {
+app.post("/from_face", (req, res) => {
+    console.log(req.body);
+    linkedin_url = req.body;
+});
+
+app.get("/to_link_api", (req, res) => {
+    res.send(linkedin_url);
+});
+
+app.post("/parse_linkedin", (req, res) => {
     console.log(req.body);
     linkedin_data = req.body;
 });

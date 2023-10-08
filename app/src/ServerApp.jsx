@@ -32,6 +32,7 @@ import React, { useEffect } from "react";
 // export default ServerApp
 
 function ServerApp() {
+    /*
     useEffect(() => {
         fetch("http://localhost:5000/express_backend")
             .then(res => res.json())
@@ -39,6 +40,6 @@ function ServerApp() {
     }, [])
 
     // return <p></p>
+    */
 }
-
 export default ServerApp
