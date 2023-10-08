@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { useEffect } from "react";
 
 // class ServerApp extends Component {
 //     state = {
@@ -38,7 +38,7 @@ function ServerApp() {
             .then(data => console.log(data))
     }, [])
 
-    return <p></p>
+    // return <p></p>
 }
 
 export default ServerApp

@@ -19,6 +19,13 @@ const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-app.get("/express_backend", (req, res) => {
-    res.send({ express: "EXPRESS X REACT NEW OTP" });
+var linkedin_data;
+
+app.get("/parse_linkedin", (req, res) => {
+    console.log(req.body);
+    linkedin_data = req.body;
+});
+
+app.get("/to_gpt", (req, res) => {
+    res.send(linkedin_data);
 });

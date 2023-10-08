@@ -2,6 +2,7 @@
 import fetch from "node-fetch";
 import cheerio from "cheerio";
 import fs from "fs";
+import express from "express";
 
 //when button is clicked, the link inside of the textbox will become the inputted url
 const inputtedUrl = "https://www.linkedin.com/in/dianneth-murillo/";
@@ -115,9 +116,11 @@ try {
 
   const jsonData = JSON.stringify(allDataFromLinkedIn, null, 2);
 
-  const jsonFilePath = "dataFromLinkedIn.json";
-
-  fs.writeFileSync(jsonFilePath, jsonData);
+  useEffect(() => {
+    fetch("http://localhost:5000/parse_linkedin")
+        .then(res => res.send(jsonData))
+        .then(console.log(jsonData))
+  }, [])
 
   console.log(`Data saved`);
 } catch (error) {

@@ -86,4 +86,14 @@ function App() {
   }
 }
 
+
+var linkedin_data;
+
+function serverRequest() {
+  useEffect(() => {
+  fetch("http://localhost:5000/to_gpt")
+      .then(linkedin_data = req.body)
+}, [])
+}
+
 export default App
