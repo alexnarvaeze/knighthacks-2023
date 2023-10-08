@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export default function Back() {
   const [response, setResponse] = useState("");
 
-  function newFetch(){
+  function newFetch() {
     fetchAndDisplayResponse()
       .then((res) => res.json())
       .then((data) => setResponse(data));
